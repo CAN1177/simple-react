@@ -45,9 +45,9 @@ function render(el, container) {
 
 function initChildren(fiber) {
   const children = fiber.props.children || [];
-  let prevSibling = null;
+  let prevChild = null;
   children.forEach((child, index) => {
-    // ? 不明白
+    // 就是prevChild的父节点，用来指向prevChild的叔叔节点
     const newFiber = {
       type: child.type,
       props: child.props,
@@ -61,9 +61,9 @@ function initChildren(fiber) {
       fiber.child = newFiber;
     } else {
       // 设置指针
-      prevSibling.sibling = newFiber;
+      prevChild.sibling = newFiber;
     }
-    prevSibling = newFiber;
+    prevChild = newFiber;
   });
 }
 
