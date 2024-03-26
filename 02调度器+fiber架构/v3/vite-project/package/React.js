@@ -47,7 +47,7 @@ function initChildren(fiber) {
   const children = fiber.props.children || [];
   let prevChild = null;
   children.forEach((child, index) => {
-    // 就是prevChild的父节点，用来指向prevChild的叔叔节点
+    // 就是父节点，用来指向叔叔节点
     const newFiber = {
       type: child.type,
       props: child.props,
@@ -71,11 +71,12 @@ function initChildren(fiber) {
  * 任务调度器的模拟
  * @param {} deadline
  */
-// 当前任务
+// nextWorkOfUnit当前执行的任务
 let nextWorkOfUnit = null;
 function workLoop(deadline) {
   let shouldYield = false;
   while (!shouldYield && nextWorkOfUnit) {
+    console.log("%c Line:79 🥑 nextWorkOfUnit", "color:#f5ce50", nextWorkOfUnit);
     nextWorkOfUnit = performUnitOfWork(nextWorkOfUnit);
     shouldYield = deadline.timeRemaining() < 1;
   }
