@@ -10,10 +10,15 @@ import cancel from "../icon/cancel.svg";
 
 import logo from "../icon/logo.svg";
 
+import save from "../icon/save.svg";
+
 import "./index.less";
 
 const ToDo = () => {
   const [inputValue, setInputValue] = React.useState("");
+
+  const [filter, setFilter] = React.useState("all");
+  const [showLists, setShowLists] = React.useState([]);
   const [lists, setLists] = React.useState([
     {
       id: 1,
@@ -38,7 +43,7 @@ const ToDo = () => {
   ]);
 
   const handleAdd = () => {
-    addItem(lists.length + 1, inputValue);
+    addItem(lists.length + 1, inputValue, "todo");
     setInputValue("");
   };
 
@@ -46,10 +51,10 @@ const ToDo = () => {
     setLists(lists.filter((item) => item.id !== id));
   };
 
-  const addItem = (id, name) => {
+  const addItem = (id, name, status) => {
     inputValue &&
       inputValue !== "" &&
-      setLists((lists) => [...lists, { id, name }]);
+      setLists((lists) => [...lists, { id, name, status }]);
   };
 
   const handleDone = (id) => {
@@ -80,6 +85,33 @@ const ToDo = () => {
     );
   };
 
+  const handleSave = () => {
+    localStorage.setItem("todoList", JSON.stringify(lists));
+    alert("保存成功");
+  };
+
+  React.useEffect(() => {
+    const todoList = localStorage.getItem("todoList");
+    if (todoList) {
+      setLists(JSON.parse(todoList));
+    }
+  }, []);
+
+  React.useEffect(() => {
+    // 筛选
+    if (filter === "all") {
+      setShowLists(lists);
+    }
+
+    if (filter === "todo") {
+      setShowLists(lists.filter((item) => item.status === "todo"));
+    }
+
+    if (filter === "done") {
+      setShowLists(lists.filter((item) => item.status === "done"));
+    }
+  }, [filter, lists]);
+
   return (
     <div className="container">
       <h1 className="title">
@@ -93,10 +125,38 @@ const ToDo = () => {
           onChange={(e) => setInputValue(e.target.value)}
         />
         <img src={add} onClick={handleAdd} alt="icon" />
+        <img src={save} onClick={handleSave} alt="icon" />
       </div>
+      <div>
+        <input
+          type="radio"
+          name="filter"
+          id="all"
+          checked={filter === "all"}
+          onChange={() => setFilter("all")}
+        />
+        <label htmlFor="all">all</label>
 
+        <input
+          type="radio"
+          name="filter"
+          id="todo"
+          checked={filter === "todo"}
+          onChange={() => setFilter("todo")}
+        />
+        <label htmlFor="todo">todo</label>
+
+        <input
+          type="radio"
+          name="filter"
+          id="done"
+          checked={filter === "done"}
+          onChange={() => setFilter("done")}
+        />
+        <label htmlFor="done">done</label>
+      </div>
       <ul>
-        {...lists.map((item) => {
+        {...showLists.map((item) => {
           return (
             <li key={item.id} className={item.status}>
               {item.name}

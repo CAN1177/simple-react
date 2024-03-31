@@ -84,6 +84,11 @@ function workLoop(deadline) {
     commitRoot();
   }
 
+
+  if (nextWorkOfUnit && !wipRoot) {
+    wipRoot = currentRoot
+  }
+
   requestIdleCallback(workLoop);
 }
 
